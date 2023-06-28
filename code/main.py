@@ -36,21 +36,15 @@ logging.basicConfig(filename='netimpc.log',
 
 import asyncio
 import os
-import config as cfg
 
 from merossHelper import getMerossDevices
 from merossHelper import getInstantPowerConsumption
 from netimHelper import getPowerConsumptionMetricId
 from netimHelper import matchNetImMerossDevices
 from netimHelper import uploadPowerConsumption
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.events import (
-    EVENT_JOB_EXECUTED,
-    EVENT_JOB_ERROR,
-)
 
 """
-    *** mainWorkerAsync ***
+    *** main ***
 
     Main Thread which with is started from the scheduler to performs:
     - Request a list of all active MSS310 devices 
@@ -62,7 +56,7 @@ from apscheduler.events import (
       per NetIM device (aligned to the MSS310 device) to NetIM
     
 """
-async def mainWorkerAsync():
+async def main():
 
     logging.info("START PREPARATION...")
 
@@ -112,41 +106,17 @@ async def mainWorkerAsync():
 
 
 """
-    *** job_listener ***
-
-    The function is a listener for the scheduler to log the status of the MainWorker
-    thread.
-
-"""
-def job_listener(event):
-    if event.exception:
-        logging.error("MainWorker Thread crashed!")
-    else:
-        logging.info("MainWorkerThread successful triggered.")
-
-
-"""
     *** LAUNCH ROUTINE ****
 
-    The launch routine is using a scheduler to plan the execution of the MainWorker
-    thread. 
-    The MainWorker will be executed immediately after starting this script and at the 
-    same time will be restarted periodically after the time period specified in the 
-    configuration.
-
+    The MainWorker will be executed immediately after starting this script.
     The Services write a log file (netimpc.log) to the working directory.
 
 """
 # START NetIM Power Consumption worker
 logging.info("NetIM Power Consumption Worker Version 2023.06.002")
-scheduler = AsyncIOScheduler()
-scheduler.add_job(mainWorkerAsync)
-scheduler.add_job(mainWorkerAsync, 'interval', minutes = cfg.general["updateIntervalMinutes"])
-scheduler.start()
-print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
-
-# Execution will block here until Ctrl+C (Ctrl+Break on Windows) is pressed.
-try:
-    asyncio.get_event_loop().run_forever()
-except (KeyboardInterrupt, SystemExit):
-    pass
+if __name__ == '__main__':
+    if os.name == 'nt':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
+    loop.stop()
