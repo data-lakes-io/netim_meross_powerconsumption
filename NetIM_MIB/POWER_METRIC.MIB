@@ -1,0 +1,35 @@
+POWERMETRIC_MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+OBJECT-TYPE, mib-2,
+Integer32	FROM SNMPv2-SMI;
+
+
+host     OBJECT IDENTIFIER ::= { mib-2 100002 } 
+
+
+MetricPowerW  OBJECT-TYPE
+    SYNTAX     Integer32 (1..2147483647)
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+        "Custom metric for Power in Watt"
+    ::= { host 1 }
+	
+MetricVoltage  OBJECT-TYPE
+    SYNTAX     Integer32 (1..2147483647)
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+        "Custom metric for Voltage"
+    ::= { host 2 }
+	
+MetricCurrent  OBJECT-TYPE
+    SYNTAX     Integer32 (1..2147483647)
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+        "Custom metric for Current in Amp"
+    ::= { host 3 }
+
+END
