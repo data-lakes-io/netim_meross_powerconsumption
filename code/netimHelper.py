@@ -1,3 +1,32 @@
+# MIT License
+#
+# Copyright (c) 2023 data-lakes.io / Oliver Oehlenberg
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+"""
+    #######################################################################
+    ### DO NOT LAUNCH THIS SCRIPT! IT PROVIDES HELPER ROUTINES TO       ###
+    ### ACCESS THE NETIM API.                                           ###
+    #######################################################################
+"""
+
 import logging
 logging.basicConfig(filename='netimpc.log',
         level=logging.INFO,
@@ -9,6 +38,14 @@ import requests
 import datetime
 import json
 
+"""
+    *** checkMetricDefinition ***
+
+    The getPowerConsumptionMetricId routine is passing the metric configuration to this
+    routine to validate if all expected fields in the User Custom Metric definition are
+    exists.
+
+"""
 def checkMetricDefinition(metric):
     powerFound = False
     VoltageFound = False
@@ -27,6 +64,17 @@ def checkMetricDefinition(metric):
     logging.warn("Invalid Metric Definition: PowerFound={}, VoltageFound={}, CurrentFound={}".format(powerFound, VoltageFound, CurrentFound))
     return False
 
+
+"""
+    *** getPowerConsumptionMetricId ***
+    
+    To upload the Power Consumption data to NetIM, the service needs the Metric Class ID
+    from NetIM for the Power Consumption metrics. This routine is requesting all metric
+    classes and searchs for the correct metric definition. 
+
+    To access NetIM, the routine is leveraging the configuration from the config.py file.
+    
+"""
 def getPowerConsumptionMetricId():
 
     api_url = "{}/api/netim/v1/metric-classes".format(cfg.netim["coreApiBaseUrl"])
@@ -48,6 +96,19 @@ def getPowerConsumptionMetricId():
                 return "ERROR_WRONG_METRIC_DEF"
             return metricId
 
+
+
+"""
+    ***  matchNetImMerossDevices ***
+
+    This routine is requesting all devices from NetIM and checks if the device is part of
+    the merossDevices data set. The NetIM Device Name (converted to UPPER) must be the same
+    as the Meross Device Name (must be in UPPER).
+
+    If the NetIM device matches with a Merros device, the routine create a list of device
+    names and add the deviceAccessInfoId to the result.
+
+"""
 def matchNetImMerossDevices(merossDevices):
 
     api_url = "{}/api/netim/v1/devices?limit=5000&offset=0".format(cfg.netim["coreApiBaseUrl"])
@@ -72,6 +133,14 @@ def matchNetImMerossDevices(merossDevices):
         
     return result
 
+
+"""
+    *** uploadPowerConsumption ***
+
+    This routine is uploading the prepared data per NetIM device to NetIM. 
+    It used the configuration from config.py to login into NetIM.
+
+"""
 def uploadPowerConsumption(data, metricId):
 
     api_url = "{}/swarm/NETIM_NETWORK_METRIC_IMPORT_SERVICE/api/v1/network-metric-import".format(cfg.netim["coreApiBaseUrl"])

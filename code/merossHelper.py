@@ -1,3 +1,32 @@
+# MIT License
+#
+# Copyright (c) 2023 data-lakes.io / Oliver Oehlenberg
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+"""
+    #######################################################################
+    ### DO NOT LAUNCH THIS SCRIPT! IT PROVIDES HELPER ROUTINES TO       ###
+    ### ACCESS THE MEROSS API.                                          ###
+    #######################################################################
+"""
+
 import logging
 logging.basicConfig(filename='netimpc.log',
         level=logging.INFO,
@@ -9,6 +38,15 @@ import config as cfg
 from meross_iot.http_api import MerossHttpClient
 from meross_iot.manager import MerossManager
 
+
+"""
+    *** getMerossDevices ***
+
+    Is using the Meross_IOT Library to request a list of all active MSS310 devices.
+    The routine is using the config.py file to leveraging the API E-Mail and Password
+    information.
+
+"""
 async def getMerossDevices():
 
     # Login into Meross Api
@@ -33,6 +71,15 @@ async def getMerossDevices():
 
     return result
 
+"""
+    *** isNetIMmanaged ***
+
+    The routine is validating if the passed Meross deviceName is avaiabile in the NetIM 
+    device list. If yes, it will return the NetIM devicename and Id.
+
+    NetIM and Meross device names will be compared in upper letters!
+
+"""
 def isNetIMmanaged(netImDeviceMapping, deviceName):
 
     for dev in netImDeviceMapping:
@@ -45,6 +92,16 @@ def isNetIMmanaged(netImDeviceMapping, deviceName):
         
     return None
 
+
+"""
+    *** getInstantPowerConsumption ***
+
+    The routine will request ALL power consumptions for all MSS310 devices at onces. 
+    Then the netImDeviceMapping dataset is used to build a NetIM data set for NetIM
+    managed devices. To request the Merros information, the configured credentials
+    from the config.py file will be used.
+
+"""
 async def getInstantPowerConsumption(netImDeviceMapping):
 
 # Login into Meross Api
