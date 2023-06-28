@@ -29,11 +29,6 @@
 
 
 import logging
-logging.basicConfig(filename='netimpc.log',
-        level=logging.INFO,
-        format='%(asctime)s %(message)s', 
-        datefmt='%m/%d/%Y %I:%M:%S %p')
-
 import asyncio
 import os
 
@@ -113,7 +108,7 @@ async def main():
 
 """
 # START NetIM Power Consumption worker
-logging.info("NetIM Power Consumption Worker Version 2023.06.002")
+logging.info("NetIM Power Consumption Worker Version 2023.06.003")
 if __name__ == '__main__':
     if os.name == 'nt':
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())

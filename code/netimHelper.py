@@ -28,15 +28,12 @@
 """
 
 import logging
-logging.basicConfig(filename='netimpc.log',
-        level=logging.INFO,
-        format='%(asctime)s %(message)s', 
-        datefmt='%m/%d/%Y %I:%M:%S %p')
-
 import config as cfg
 import requests
 import datetime
 import json
+import urllib3
+urllib3.disable_warnings()
 
 """
     *** checkMetricDefinition ***

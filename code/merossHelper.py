@@ -28,11 +28,6 @@
 """
 
 import logging
-logging.basicConfig(filename='netimpc.log',
-        level=logging.INFO,
-        format='%(asctime)s %(message)s', 
-        datefmt='%m/%d/%Y %I:%M:%S %p')
-
 import config as cfg
 
 from meross_iot.http_api import MerossHttpClient
