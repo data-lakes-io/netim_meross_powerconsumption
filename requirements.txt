@@ -1,3 +1,2 @@
 requests
 meross_iot==0.4.5.9
-apscheduler
